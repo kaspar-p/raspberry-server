@@ -8,7 +8,7 @@ const { textMe } = require("./text-me");
 console.log("Starting server!");
 
 // Once every hour, at the 30 minute mark
-const topoBackpackJob = scheduler.scheduleJob("30 30 * * * *", () => {
+const topoBackpackJob = scheduler.scheduleJob("30 */30 * * * *", () => {
   const topoPath = path.resolve(__dirname, "../sniper-bot/topo.py");
   const topoOptions = `--name="rover pack - classic"`;
 
