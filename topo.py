@@ -1,9 +1,4 @@
-import argparse
-from selenium import webdriver
-from selenium.webdriver.support.ui import Select
-from requests_html import HTMLSession, AsyncHTMLSession
-import time
-import config
+from requests_html import HTMLSession
 
 product_url = "https://topodesigns.com/collections/backpacks/products/rover-pack-classic?variant=33191946944565"
 
