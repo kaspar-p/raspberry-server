@@ -1,32 +1,13 @@
-const scheduler = require("node-schedule");
-const { exec } = require("child_process");
-const path = require("path");
-require("dotenv").config();
+import "./config.js";
+import _ from "lodash";
 
-const { textMe } = require("./text-me");
+import Bulletin from "./lib/bulletin.js";
+import jobs from "./lib/jobs.js";
 
-console.log("Starting server!");
+// Create the table
+const bulletin = new Bulletin(Object.keys(jobs));
 
-// Once every hour, at the 30 minute mark
-const topoBackpackJob = scheduler.scheduleJob("* 30 * * * *", () => {
-  const topoPath = path.resolve(__dirname, "./topo.py");
-  const topoOptions = `--name="rover pack - classic"`;
-
-  console.log("Begin checking TOPO availability:");
-  exec(`python ${topoPath} ${topoOptions}`, (error, stdout, stderr) => {
-    if (stderr) return console.log(stderr);
-    if (error) return console.log(error);
-
-    if (stdout === "AVAILABLE\n") {
-      console.log(stdout);
-      textMe("The TOPO backpack 'Rover Pack - Classic' is available!");
-    } else if (stdout === "UNAVAILABLE\n") {
-      console.log(
-        "Backpack still unavailable",
-        new Date().toLocaleTimeString() +
-          " on " +
-          new Date().toLocaleDateString()
-      );
-    }
-  });
+// Give update capability with wrapping to each CRON job
+_.forEach(jobs, (job, name) => {
+  job((status) => bulletin.updateStatus(name, status));
 });
