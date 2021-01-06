@@ -2,12 +2,15 @@ import "./config.js";
 import _ from "lodash";
 
 import Bulletin from "./lib/bulletin.js";
-import jobs from "./lib/jobs.js";
+import createJobs from "./lib/jobs.js";
 
 // Create the table
-const bulletin = new Bulletin(Object.keys(jobs));
 
-// Give update capability with wrapping to each CRON job
+let jobs = createJobs();
+
+const bulletin = new Bulletin(jobs);
+
 _.forEach(jobs, (job, name) => {
-  job((status) => bulletin.updateStatus(name, status));
+  job.giveParent(bulletin);
 });
+bulletin.drawFirstTime();
