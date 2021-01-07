@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js --experimental-modules",
+    "start": "node server.js --experimental-modules true",
+    "start-headless": "node server.js --experimental-modules false",
     "dev": "nodemon server.js --experimental-modules"
   },
   "type": "module",
