@@ -4,7 +4,8 @@ import express from "express";
 import compression from "compression";
 import bodyParser from "body-parser";
 import Campi from "campi";
-import { Base64Encode } from "base64-stream";
+import raspivid from "raspivid";
+import * as Base64Encode from "base64-stream";
 import * as socketIO from "socket.io";
 
 import Bulletin from "./lib/bulletin.js";
@@ -59,36 +60,45 @@ let busy = false;
 const width = 1280;
 const height = 960;
 
-// Begin the camera operations
-setInterval(() => {
-  if (!busy) {
-    busy = true;
-    campi.getImageAsStream(
-      {
-        width,
-        height,
-        shutter: 200000,
-        timeout: 1,
-        nopreview: true,
-      },
-      (err, stream) => {
-        let message = "";
+const video = raspivid({ width, height, fps: 20 });
+video.on("data", (data) =>
+  io.sockets.emit("display-image", {
+    imageWidth: width,
+    imageHeight: height,
+    imageData: data,
+  })
+);
 
-        const base64Stream = stream.pipe(new Base64Encode());
+// // Begin the camera operations
+// setInterval(() => {
+//   if (!busy) {
+//     busy = true;
+//     campi.getImageAsStream(
+//       {
+//         width,
+//         height,
+//         shutter: 200000,
+//         timeout: 1,
+//         nopreview: true,
+//       },
+//       (err, stream) => {
+//         let message = "";
 
-        base64Stream.on("data", (buffer) => {
-          message += buffer.toString();
-        });
+//         const base64Stream = stream.pipe(new Base64Encode());
 
-        base64Stream.on("end", () => {
-          io.sockets.emit("display-image", {
-            imageWidth: width,
-            imageHeight: height,
-            imageData: message,
-          });
-          busy = false;
-        });
-      }
-    );
-  }
-}, 50);
+//         base64Stream.on("data", (buffer) => {
+//           message += buffer.toString();
+//         });
+
+//         base64Stream.on("end", () => {
+//           io.sockets.emit("display-image", {
+//             imageWidth: width,
+//             imageHeight: height,
+//             imageData: message,
+//           });
+//           busy = false;
+//         });
+//       }
+//     );
+//   }
+// }, 50);
