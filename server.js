@@ -16,6 +16,7 @@ const server = express();
 //     CONFIGURATION
 // ---------------------
 server.use(compression());
+server.use(bodyParser({ limit: '50mb' }))
 server.use(bodyParser.json());
 server.use(bodyParser.urlencoded({ extended: false }));
 

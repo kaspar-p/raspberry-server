@@ -3,7 +3,7 @@ from picamera.array import PiRGBArray
 from picamera import PiCamera
 import requests
 import time
-import cv2
+import json
 
 # initialize the camera and grab a reference to the raw camera capture
 camera = PiCamera()
@@ -20,8 +20,9 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
     # grab the raw NumPy array representing the image, then initialize the timestamp
     # and occupied/unoccupied text
     image = frame.array
-
-    x = requests.post(serverURL, data=image)
+    headers = {'Content-Type': 'application/json', 'Accept':'application/json'}
+    body = json.dumps(frame.array.tolist())
+    x = requests.post(serverURL, data=body, headers=headers)
 
     # clear the stream in preparation for the next frame
     rawCapture.truncate(0)
