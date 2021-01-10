@@ -1,9 +1,10 @@
 import "./config.js";
 import _ from "lodash";
 import express from "express";
+import * as fs from "fs";
 import compression from "compression";
 import bodyParser from "body-parser";
-import raspividStream from "raspivid-stream";
+import { StreamCamera, Codec } from "pi-camera-connect";
 import * as socketIO from "socket.io";
 
 import Bulletin from "./lib/bulletin.js";
@@ -30,11 +31,42 @@ const io = new socketIO.Server(server, {
   },
 });
 
+const width = 1280;
+const height = 960;
+
+// Capture 5 seconds of H264 video and save to disk
+const startStreaming = async () => {
+  const streamCamera = new StreamCamera({
+    codec: Codec.H264,
+  });
+
+  const videoStream = streamCamera.createStream();
+  videoStream.on("data", (data) => {
+    io.sockets.emit("display-image", {
+      imageWidth: width,
+      imageHeight: height,
+      imageData: data,
+    });
+  });
+
+  await streamCamera.startCapture();
+};
+
 io.on("connection", (socket) => {
   const routes = routeBuilder(io);
   app.use("/api", routes);
 
   console.log("Hello, new user: ", socket.id);
+  startStreaming();
+});
+
+const video = raspividStream({ width, height, framerate: 20 });
+video.on("data", (data) => {
+  io.sockets.emit("display-image", {
+    imageWidth: width,
+    imageHeight: height,
+    imageData: data,
+  });
 });
 
 let jobs = createJobs();
@@ -51,49 +83,3 @@ if (displayGUI) {
   });
   bulletin.initialize();
 }
-
-const width = 1280;
-const height = 960;
-
-const video = raspividStream({ width, height, framerate: 20 });
-video.on("data", (data) => {
-  io.sockets.emit("display-image", {
-    imageWidth: width,
-    imageHeight: height,
-    imageData: data,
-  });
-});
-
-// // Begin the camera operations
-// setInterval(() => {
-//   if (!busy) {
-//     busy = true;
-//     campi.getImageAsStream(
-//       {
-//         width,
-//         height,
-//         shutter: 200000,
-//         timeout: 1,
-//         nopreview: true,
-//       },
-//       (err, stream) => {
-//         let message = "";
-
-//         const base64Stream = stream.pipe(new Base64Encode());
-
-//         base64Stream.on("data", (buffer) => {
-//           message += buffer.toString();
-//         });
-
-//         base64Stream.on("end", () => {
-//           io.sockets.emit("display-image", {
-//             imageWidth: width,
-//             imageHeight: height,
-//             imageData: message,
-//           });
-//           busy = false;
-//         });
-//       }
-//     );
-//   }
-// }, 50);
