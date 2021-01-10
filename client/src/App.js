@@ -28,7 +28,7 @@ function App() {
       canvas.width = data.imageWidth;
       canvas.height = data.imageHeight;
       const context = canvas.getContext("2d");
-      const imageData = context.createImageData(200, 200);
+      const imageData = context.createImageData(imageWidth, imageHeight);
 
       imageData.data.set(data.imageData);
 
