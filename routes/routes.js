@@ -1,11 +1,14 @@
 import express from "express";
-
 const router = express.Router();
 
-router.post("/video", (req, res) => {
-  console.log("Getting Video!");
-  console.log("\n", req, "\n");
-  console.log("\n", res, "\n");
-});
+const routeBuilder = (socket) => {
+  router.post("/video", (req, res) => {
+    console.log("Getting Video!");
+    socket.emit("display-image", req.body);
+    res.end();
+  });
 
-export default router;
+  return router;
+};
+
+export default routeBuilder;
