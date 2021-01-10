@@ -17,7 +17,7 @@ function App() {
     socket.current.on(
       "display-image",
       ({ imageWidth, imageHeight, imageData }) => {
-        console.log("Displaying Image!");
+        console.log("Displaying Image!", imageData);
         const parent = document.getElementById("app-header");
         while (parent.children.length > 0) {
           parent.removeChild(parent.children[0]);
