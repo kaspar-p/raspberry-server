@@ -9,7 +9,7 @@ function App() {
   const data = useRef();
 
   useEffect(() => {
-    socket.current = io("http://localhost:1441");
+    socket.current = io("http://10.0.0.216:1441");
 
     console.log("Begin handling: ", socket.current);
     socket.current.on("connect", () => {
@@ -40,7 +40,6 @@ function App() {
       // set the img.src to the canvas data url
       image.height = data.imageHeight;
       image.width = data.imageWidth;
-      image.intrinsicsize = "200 x 200";
       image.src = canvas.toDataURL();
 
       // append the new img object to the page

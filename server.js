@@ -27,7 +27,7 @@ const server = app.listen(PORT);
 
 const io = new socketIO.Server(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: "http://10.0.0.216:3000",
     methods: ["GET", "POST"],
   },
 });
@@ -55,14 +55,18 @@ if (displayGUI) {
 }
 
 let busy = false;
+
+const width = 1280;
+const height = 960;
+
 // Begin the camera operations
 setInterval(() => {
   if (!busy) {
     busy = true;
     campi.getImageAsStream(
       {
-        width: 1280,
-        height: 960,
+        width,
+        height,
         shutter: 200000,
         timeout: 1,
         nopreview: true,
@@ -77,7 +81,11 @@ setInterval(() => {
         });
 
         base64Stream.on("end", () => {
-          io.sockets.emit("display-image", message);
+          io.sockets.emit("display-image", {
+            imageWidth: width,
+            imageHeight: height,
+            data: message,
+          });
           busy = false;
         });
       }
