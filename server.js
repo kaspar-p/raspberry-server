@@ -84,7 +84,7 @@ setInterval(() => {
           io.sockets.emit("display-image", {
             imageWidth: width,
             imageHeight: height,
-            data: message,
+            imageData: message,
           });
           busy = false;
         });
