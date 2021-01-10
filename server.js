@@ -5,6 +5,7 @@ import * as fs from "fs";
 import compression from "compression";
 import bodyParser from "body-parser";
 import { StreamCamera, Codec } from "pi-camera-connect";
+import expressWSInitializer from "express-ws";
 import * as socketIO from "socket.io";
 
 import Bulletin from "./lib/bulletin.js";
@@ -14,6 +15,7 @@ import routeBuilder from "./routes/routes.js";
 const PORT = process.env.PORT || 1441;
 
 const app = express();
+const expressWS = expressWSInitializer(app);
 
 // ---------------------
 //     CONFIGURATION
