@@ -4,6 +4,7 @@ import express from "express";
 import * as fs from "fs";
 import compression from "compression";
 import bodyParser from "body-parser";
+import raspividStream from "raspivid-stream";
 import { StreamCamera, Codec } from "pi-camera-connect";
 import expressWSInitializer from "express-ws";
 import * as socketIO from "socket.io";
@@ -45,8 +46,9 @@ app.ws("/video", async (ws, req) => {
     })
   );
 
-  const streamCamera = new StreamCamera({ codec: Codec.H264 });
-  const videoStream = streamCamera.createStream();
+  const videoStream = raspividStream();
+  // const streamCamera = new StreamCamera({ codec: Codec.H264 });
+  // const videoStream = streamCamera.createStream();
 
   videoStream.on("data", (data) => {
     ws.send(data, { binary: true }, (error) => {
