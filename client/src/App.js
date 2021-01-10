@@ -30,7 +30,7 @@ function App() {
           }
         });
 
-        stream.on("end", function (data) {
+        imageStream.on("end", (data) => {
           b64String = btoa(binaryString);
 
           const image = new Image();

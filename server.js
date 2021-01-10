@@ -58,7 +58,7 @@ if (displayGUI) {
 const width = 1280;
 const height = 960;
 
-const video = raspivid({ width, height, fps: 20 });
+const video = raspivid({ width, height, framerate: 20 });
 video.on("data", (data) => {
   io.sockets.emit("display-image", {
     imageWidth: width,
