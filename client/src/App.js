@@ -16,33 +16,24 @@ function App() {
 
     socket.current.on(
       "display-image",
-      ({ imageWidth, imageHeight, imageStream }) => {
+      ({ imageWidth, imageHeight, imageData }) => {
+        console.log("Displaying Image!");
         const parent = document.getElementById("app-header");
         while (parent.children.length > 0) {
           parent.removeChild(parent.children[0]);
         }
 
-        let binaryString = "";
-        imageStream.on("data", (data) => {
-          console.log("streaming: ", data);
-          for (let i = 0; i < data.length; i++) {
-            binaryString += String.fromCharCode(data[i]);
-          }
-        });
+        const b64String = btoa(imageData);
 
-        imageStream.on("end", (data) => {
-          b64String = btoa(binaryString);
+        const image = new Image();
 
-          const image = new Image();
+        // set the img.src to the canvas data url
+        image.height = imageHeight;
+        image.width = imageWidth;
+        image.src = "data:image/jpg;base64," + b64String;
 
-          // set the img.src to the canvas data url
-          image.height = imageHeight;
-          image.width = imageWidth;
-          image.src = "data:image/jpg;base64," + b64String;
-
-          // append the new img object to the page
-          document.getElementById("app-header").appendChild(image);
-        });
+        // append the new img object to the page
+        document.getElementById("app-header").appendChild(image);
       }
     );
   });

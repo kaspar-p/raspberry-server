@@ -3,9 +3,7 @@ import _ from "lodash";
 import express from "express";
 import compression from "compression";
 import bodyParser from "body-parser";
-import Campi from "campi";
-import raspivid from "raspivid";
-import * as Base64Encode from "base64-stream";
+import raspividStream from "raspivid-stream";
 import * as socketIO from "socket.io";
 
 import Bulletin from "./lib/bulletin.js";
@@ -15,7 +13,6 @@ import routeBuilder from "./routes/routes.js";
 const PORT = process.env.PORT || 1441;
 
 const app = express();
-const campi = new Campi();
 
 // ---------------------
 //     CONFIGURATION
@@ -58,12 +55,12 @@ if (displayGUI) {
 const width = 1280;
 const height = 960;
 
-const video = raspivid({ width, height, framerate: 20 });
+const video = raspividStream({ width, height, framerate: 20 });
 video.on("data", (data) => {
   io.sockets.emit("display-image", {
     imageWidth: width,
     imageHeight: height,
-    imageStream: video,
+    imageData: data,
   });
 });
 
