@@ -1,6 +1,5 @@
 import { useEffect, useRef } from "react";
 
-import logo from "./logo.svg";
 import { io } from "socket.io-client";
 import "./App.css";
 
@@ -16,8 +15,6 @@ function App() {
     });
 
     socket.current.on("display-image", (data) => {
-      console.log("Displaying Image:", data);
-
       const parent = document.getElementById("app-header");
       while (parent.children.length > 0) {
         parent.removeChild(parent.children[0]);
