@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-
+import WSAvcPlayer from "h264-live-player";
 import { io } from "socket.io-client";
 import "./App.css";
 
@@ -23,17 +23,14 @@ function App() {
           parent.removeChild(parent.children[0]);
         }
 
-        const b64String = btoa(imageData);
+        const canvas = document.createElement("canvas", {
+          width: imageWidth,
+          height: imageHeight,
+        });
+        parent.appendChild(canvas);
 
-        const image = new Image();
-
-        // set the img.src to the canvas data url
-        image.height = imageHeight;
-        image.width = imageWidth;
-        image.src = "data:image/jpg;base64," + b64String;
-
-        // append the new img object to the page
-        document.getElementById("app-header").appendChild(image);
+        const player = new WSAvcPlayer(canvas, "webgl");
+        player.connect("http://10.0.0.216:1441/video");
       }
     );
   });

@@ -34,40 +34,35 @@ const io = new socketIO.Server(server, {
 const width = 1280;
 const height = 960;
 
-// Capture 5 seconds of H264 video and save to disk
-const startStreaming = async () => {
-  const streamCamera = new StreamCamera({
-    codec: Codec.H264,
-  });
+app.ws("/video", async (ws, req) => {
+  ws.send(
+    JSON.stringify({
+      action: "init",
+      width,
+      height,
+    })
+  );
 
+  const streamCamera = new StreamCamera({ codec: Codec.H264 });
   const videoStream = streamCamera.createStream();
+
   videoStream.on("data", (data) => {
-    io.sockets.emit("display-image", {
-      imageWidth: width,
-      imageHeight: height,
-      imageData: data,
+    ws.send(data, { binary: true }, (error) => {
+      if (error) console.error(error);
     });
   });
 
   await streamCamera.startCapture();
-};
-
-io.on("connection", (socket) => {
-  const routes = routeBuilder(io);
-  app.use("/api", routes);
-
-  console.log("Hello, new user: ", socket.id);
-  startStreaming();
 });
 
-const video = raspividStream({ width, height, framerate: 20 });
-video.on("data", (data) => {
-  io.sockets.emit("display-image", {
-    imageWidth: width,
-    imageHeight: height,
-    imageData: data,
-  });
-});
+// const video = raspividStream({ width, height, framerate: 20 });
+// video.on("data", (data) => {
+//   io.sockets.emit("display-image", {
+//     imageWidth: width,
+//     imageHeight: height,
+//     imageData: data,
+//   });
+// });
 
 let jobs = createJobs();
 
