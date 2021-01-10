@@ -4,7 +4,7 @@ import express from "express";
 import compression from "compression";
 import bodyParser from "body-parser";
 import Campi from "campi";
-import base64 from "base64-stream";
+import { Base64Encode } from "base64-stream";
 import * as socketIO from "socket.io";
 
 import Bulletin from "./lib/bulletin.js";
@@ -67,16 +67,16 @@ setInterval(() => {
         timeout: 1,
         nopreview: true,
       },
-      function (err, stream) {
+      (err, stream) => {
         let message = "";
 
-        const base64Stream = stream.pipe(base64.encode());
+        const base64Stream = stream.pipe(new Base64Encode());
 
-        base64Stream.on("data", function (buffer) {
+        base64Stream.on("data", (buffer) => {
           message += buffer.toString();
         });
 
-        base64Stream.on("end", function () {
+        base64Stream.on("end", () => {
           io.sockets.emit("display-image", message);
           busy = false;
         });
