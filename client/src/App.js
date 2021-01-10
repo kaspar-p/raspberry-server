@@ -6,7 +6,6 @@ import "./App.css";
 
 function App() {
   const socket = useRef();
-  const data = useRef();
 
   useEffect(() => {
     socket.current = io("http://10.0.0.216:1441");
@@ -24,23 +23,12 @@ function App() {
         parent.removeChild(parent.children[0]);
       }
 
-      const canvas = document.createElement("canvas");
-      canvas.width = data.imageWidth;
-      canvas.height = data.imageHeight;
-      const context = canvas.getContext("2d");
-      const imageData = context.createImageData(imageWidth, imageHeight);
-
-      imageData.data.set(data.imageData);
-
-      console.log(imageData);
-      context.putImageData(imageData, 0, 0);
-
       const image = new Image();
 
       // set the img.src to the canvas data url
       image.height = data.imageHeight;
       image.width = data.imageWidth;
-      image.src = canvas.toDataURL();
+      image.src = "data:image/jpg;base64," + data.imageData;
 
       // append the new img object to the page
       document.getElementById("app-header").appendChild(image);
