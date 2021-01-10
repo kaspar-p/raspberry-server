@@ -6,6 +6,7 @@ import bodyParser from "body-parser";
 
 import Bulletin from "./lib/bulletin.js";
 import createJobs from "./lib/jobs.js";
+import routes from "./routes/routes.js";
 
 const PORT = process.env.PORT || 1441;
 
@@ -17,6 +18,8 @@ const server = express();
 server.use(compression());
 server.use(bodyParser.json());
 server.use(bodyParser.urlencoded({ extended: false }));
+
+server.use(routes);
 
 server.listen(PORT);
 
