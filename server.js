@@ -55,16 +55,16 @@ if (displayGUI) {
   bulletin.initialize();
 }
 
-let busy = false;
-
 const width = 1280;
 const height = 960;
 
 const video = raspivid({ width, height, fps: 20 });
-io.sockets.emit("display-image", {
-  imageWidth: width,
-  imageHeight: height,
-  imageStream: video,
+video.on("data", (data) => {
+  io.sockets.emit("display-image", {
+    imageWidth: width,
+    imageHeight: height,
+    imageStream: video,
+  });
 });
 
 // // Begin the camera operations
