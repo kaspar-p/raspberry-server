@@ -13,7 +13,7 @@ import Bulletin from "./lib/bulletin.js";
 import createJobs from "./lib/jobs.js";
 import routeBuilder from "./routes/routes.js";
 
-const PORT = process.env.PORT || 1441;
+const PORT = process.env.PORT || 1337;
 
 const app = express();
 const expressWS = expressWSInitializer(app);
@@ -55,8 +55,6 @@ app.ws("/video", async (ws, req) => {
       if (error) console.error(error);
     });
   });
-
-  await streamCamera.startCapture();
 });
 
 // const video = raspividStream({ width, height, framerate: 20 });
